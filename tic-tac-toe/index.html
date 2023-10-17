@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #board {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+
+            width: 640px;
+            height: 640px;
+            border: 1px solid black;
+
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #board button:hover {
+            cursor: pointer;
+        }
+
+    </style>
+    <script>
+        const game = {
+            state: [],
+            turn: 'X'
+        }
+
+        function initState() {
+            for (let i = 0; i < 9; i++) {
+                game.state[i] = ''
+            }
+        }
+
+        function onSquareClicked(index, value) {
+            if (game.state[index]) {
+                // quadrado já está preenchido
+                return
+            }
+            game.state[index] = value
+            game.turn = game.turn === 'X' ? 'O' : 'X'
+            drawBoard(game.state)
+            
+            const gameStatus = evaluateState(game.state)
+            const p = document.getElementById("game-status")
+            p.innerHTML = gameStatus
+        }
+
+
+        // Retorna 'in_progress', 'draw', 'win_x', 'win_o'
+        function evaluateState(state) {
+            const winConditions = [
+                state[0] + state[1] + state[2], // 'X' + 'X' + 'X' === 'XXX'
+                state[3] + state[4] + state[5],
+                state[6] + state[7] + state[8],
+                state[0] + state[3] + state[6], // coluna 1
+                state[2] + state[4] + state[7],
+                state[3] + state[5] + state[8],
+                state[0] + state[4] + state[8], // diagonal 1
+                state[2] + state[4] + state[6]  // diagonal 2
+            ]
+
+            for (let condition of winConditions) {
+                if (condition === "XXX") {
+                    return 'win_x'
+                }
+
+                if (condition === "OOO") {
+                    return 'win_o'
+                }
+            }
+
+            // ninguem venceu
+            let noMoreMoves = true
+            for (let i = 0; i < 9; i++) {
+                if (state[i] === '') {
+                    noMoreMoves = false // havia um erro aqui com == ao inves de = 
+                    break
+                }
+            }
+
+            if (noMoreMoves) {
+                return 'draw'
+            }
+
+            return 'in_progress'
+        }
+        
+
+        function drawBoard(state) {
+            const board = document.getElementById("board") 
+            board.innerHTML = ""
+            for (let i = 0; i < 9; i++) {
+                const btn = document.createElement("button")
+                btn.innerHTML = state[i]
+                btn.setAttribute("onclick", `onSquareClicked(${i}, "${game.turn}")`) // nao esquecer das aspas em "${game.turn}"
+                board.appendChild(btn)
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initState()
+            drawBoard(game.state)
+        })
+
+
+
+    </script>
+</head>
+<body>
+    <div id="board">
+    </div>
+    <p id="game-status"></p>
+</body>
+</html>
