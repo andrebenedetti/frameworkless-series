@@ -46,58 +46,101 @@
         }
     </style>
     <script>
-        const game = {}
+        const X_TURN = "X"
+        const O_TURN = "O"
 
-        function initState() {
-            game.state = []
-            for (let i = 0; i < 9; i++) {
-                game.state[i] = ''
+        const GAME_STATE_IN_PROGRESS = "in_progress"
+        const GAME_STATE_DRAW = "draw"
+        const GAME_STATE_X_WINS = "win_x"
+        const GAME_STATE_O_WINS = "win_o"
+
+        // This wraps the game state in a closure and exposes an API to manage the game state.
+        const { getSquare, setSquare, getSquares, resetState, initState, getTurn, toggleTurn } = (() => {
+            const game = {}
+
+            function initState() {
+                game.state = []
+                for (let i = 0; i < 9; i++) {
+                    game.state[i] = ''
+                }
+
+                game.turn = X_TURN
+
+                return game
             }
 
-            game.turn = "X"
-        }
+            function getSquare(index) {
+                return game.state[index]
+            }
+
+            function setSquare(index, value) {
+                game.state[index] = value
+            }
+
+            function getTurn() {
+                return game.turn;
+            }
+
+            function toggleTurn() {
+                game.turn = game.turn === X_TURN ? O_TURN : X_TURN;
+            }
+
+            function getSquares() {
+                return game.state.slice()
+            }
+
+
+            initState()
+
+            return {
+                initState,
+                getSquare,
+                setSquare,
+                getSquares,
+                getTurn,
+                toggleTurn
+            }
+        })();
 
         function onSquareClicked(index, value) {
-            if (game.state[index]) {
+            if (getSquare(index)) {
                 // pt-BR: quadrado já está preenchido
                 // en-US: square already filled
                 return
             }
 
-            const gameStatus = evaluateState(game.state)
-            if (gameStatus !== 'in_progress') {
+            const gameStatus = evaluateState(getSquares())
+            if (gameStatus !== GAME_STATE_IN_PROGRESS) {
                 return
             }
 
-            game.state[index] = value
-            game.turn = game.turn === 'X' ? 'O' : 'X'
-            drawBoard(game.state)
-
-
+            setSquare(index, value)
+            toggleTurn()
+            drawBoard()
         }
 
 
-        // Retorna 'in_progress', 'draw', 'win_x', 'win_o'
-        // Returns 'in_progress', 'draw', 'win_x', 'win_o'
+        // Retorna 'in_progress', 'draw', GAME_STATE_X_WINS, 'win_o'
+        // Returns 'in_progress', 'draw', GAME_STATE_X_WINS, 'win_o'
         function evaluateState(state) {
             const winConditions = [
                 state[0] + state[1] + state[2], // 'X' + 'X' + 'X' === 'XXX'
                 state[3] + state[4] + state[5],
                 state[6] + state[7] + state[8],
                 state[0] + state[3] + state[6], // coluna 1
-                state[2] + state[4] + state[7],
-                state[3] + state[5] + state[8],
+                state[1] + state[4] + state[7],
+                state[2] + state[5] + state[8],
                 state[0] + state[4] + state[8], // diagonal 1
                 state[2] + state[4] + state[6]  // diagonal 2
             ]
 
             for (let condition of winConditions) {
-                if (condition === "XXX") {
-                    return 'win_x'
+                if (condition === (X_TURN + X_TURN + X_TURN)) {
+                    return GAME_STATE_X_WINS
                 }
 
-                if (condition === "OOO") {
-                    return 'win_o'
+                if (condition === (O_TURN + O_TURN + O_TURN)) {
+                    return GAME_STATE_O_WINS
                 }
             }
 
@@ -105,49 +148,53 @@
             let noMoreMoves = true
             for (let i = 0; i < 9; i++) {
                 if (state[i] === '') {
-                    noMoreMoves = false // havia um erro aqui com == ao inves de = 
+                    noMoreMoves = false
                     break
                 }
             }
 
             if (noMoreMoves) {
-                return 'draw'
+                return GAME_STATE_DRAW
             }
 
-            return 'in_progress'
+            return GAME_STATE_IN_PROGRESS
         }
 
 
-        function drawBoard(state) {
+        function drawBoard() {
             const board = document.getElementById("board")
             board.innerHTML = ""
+
+            const state = getSquares()
+            const turn = getTurn()
+
             for (let i = 0; i < 9; i++) {
                 const btn = document.createElement("button")
                 btn.innerHTML = state[i]
-                btn.setAttribute("onclick", `onSquareClicked(${i}, "${game.turn}")`) // nao esquecer das aspas em "${game.turn}"
+                btn.setAttribute("onclick", `onSquareClicked(${i}, "${turn}")`)
                 board.appendChild(btn)
             }
 
             const gameStatus = evaluateState(state)
             const p = document.getElementById("game-status")
             const gameStatusLabelMap = {
-                "in_progress": `Game in progress.<br />${game.turn}'s turn.`,
-                "draw": "Draw =(",
-                "win_x": "X wins!",
-                "win_o": "O wins!"
+                [GAME_STATE_IN_PROGRESS]: `Game in progress.<br />${turn}'s turn.`,
+                [GAME_STATE_DRAW]: "Draw =(",
+                [GAME_STATE_X_WINS]: "X wins!",
+                [GAME_STATE_O_WINS]: "O wins!"
             }
             p.innerHTML = gameStatusLabelMap[gameStatus]
         }
 
         function resetGame() {
             initState()
-            drawBoard(game.state)
+            drawBoard()
         }
 
 
         document.addEventListener("DOMContentLoaded", () => {
             initState()
-            drawBoard(game.state)
+            drawBoard()
         })
     </script>
 </head>
