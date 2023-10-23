@@ -31,6 +31,19 @@
             font-size: 64px;
             font-weight: bold;
         }
+
+        #restartButton {
+            margin-top: 64px;
+            width: 120px;
+            padding: 12px;
+            background-color: rgb(190 24 93);
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
     </style>
     <script>
         const game = {}
@@ -126,14 +139,16 @@
             p.innerHTML = gameStatusLabelMap[gameStatus]
         }
 
+        function resetGame() {
+            initState()
+            drawBoard(game.state)
+        }
+
 
         document.addEventListener("DOMContentLoaded", () => {
             initState()
             drawBoard(game.state)
         })
-
-
-
     </script>
 </head>
 
@@ -141,6 +156,7 @@
     <p id="game-status"></p>
     <div id="board">
     </div>
+    <button id="restartButton" onclick="resetGame()">Restart</button>
 </body>
 
 </html>
