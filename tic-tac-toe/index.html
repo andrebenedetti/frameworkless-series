@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        body {
+            text-align: center;
+        }
+
         #board {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -22,6 +27,10 @@
             cursor: pointer;
         }
 
+        #board button {
+            font-size: 64px;
+            font-weight: bold;
+        }
     </style>
     <script>
         const game = {
@@ -43,10 +52,9 @@
             game.state[index] = value
             game.turn = game.turn === 'X' ? 'O' : 'X'
             drawBoard(game.state)
-            
+
             const gameStatus = evaluateState(game.state)
-            const p = document.getElementById("game-status")
-            p.innerHTML = gameStatus
+
         }
 
 
@@ -88,10 +96,10 @@
 
             return 'in_progress'
         }
-        
+
 
         function drawBoard(state) {
-            const board = document.getElementById("board") 
+            const board = document.getElementById("board")
             board.innerHTML = ""
             for (let i = 0; i < 9; i++) {
                 const btn = document.createElement("button")
@@ -99,6 +107,16 @@
                 btn.setAttribute("onclick", `onSquareClicked(${i}, "${game.turn}")`) // nao esquecer das aspas em "${game.turn}"
                 board.appendChild(btn)
             }
+
+            const gameStatus = evaluateState(state)
+            const p = document.getElementById("game-status")
+            const gameStatusLabelMap = {
+                "in_progress": `Game in progress.<br />${game.turn}'s turn.`,
+                "draw": "Draw =(",
+                "win_x": "X wins!",
+                "win_o": "O wins!"
+            }
+            p.innerHTML = gameStatusLabelMap[gameStatus]
         }
 
 
@@ -111,9 +129,11 @@
 
     </script>
 </head>
+
 <body>
+    <p id="game-status"></p>
     <div id="board">
     </div>
-    <p id="game-status"></p>
 </body>
+
 </html>
