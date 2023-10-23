@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tic Tac Toe</title>
     <style>
         body {
             text-align: center;
@@ -33,32 +33,39 @@
         }
     </style>
     <script>
-        const game = {
-            state: [],
-            turn: 'X'
-        }
+        const game = {}
 
         function initState() {
+            game.state = []
             for (let i = 0; i < 9; i++) {
                 game.state[i] = ''
             }
+
+            game.turn = "X"
         }
 
         function onSquareClicked(index, value) {
             if (game.state[index]) {
-                // quadrado já está preenchido
+                // pt-BR: quadrado já está preenchido
+                // en-US: square already filled
                 return
             }
+
+            const gameStatus = evaluateState(game.state)
+            if (gameStatus !== 'in_progress') {
+                return
+            }
+
             game.state[index] = value
             game.turn = game.turn === 'X' ? 'O' : 'X'
             drawBoard(game.state)
 
-            const gameStatus = evaluateState(game.state)
 
         }
 
 
         // Retorna 'in_progress', 'draw', 'win_x', 'win_o'
+        // Returns 'in_progress', 'draw', 'win_x', 'win_o'
         function evaluateState(state) {
             const winConditions = [
                 state[0] + state[1] + state[2], // 'X' + 'X' + 'X' === 'XXX'
