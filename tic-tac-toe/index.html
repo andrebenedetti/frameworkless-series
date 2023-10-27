@@ -144,15 +144,7 @@
                 }
             }
 
-            // ninguem venceu
-            let noMoreMoves = true
-            for (let i = 0; i < 9; i++) {
-                if (state[i] === '') {
-                    noMoreMoves = false
-                    break
-                }
-            }
-
+            const noMoreMoves = !state.includes('')
             if (noMoreMoves) {
                 return GAME_STATE_DRAW
             }
