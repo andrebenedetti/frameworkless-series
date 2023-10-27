@@ -5,8 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic Tac Toe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
     <style>
         body {
+            font-family: 'Roboto', sans-serif;
             text-align: center;
         }
 
@@ -30,6 +36,18 @@
         #board button {
             font-size: 64px;
             font-weight: bold;
+        }
+
+        .status-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 106px;
+        }
+
+        #gameStatus {
+            font-size: 24px;
+            font-weight: 600;
         }
 
         #restartButton {
@@ -124,12 +142,12 @@
         // Returns 'in_progress', 'draw', GAME_STATE_X_WINS, 'win_o'
         function evaluateState(state) {
             const winConditions = [
-                state[0] + state[1] + state[2], // 'X' + 'X' + 'X' === 'XXX'
+                state[0] + state[1] + state[2], // row1 checking later if we have 'X' + 'X' + 'X' === 'XXX'
                 state[3] + state[4] + state[5],
                 state[6] + state[7] + state[8],
-                state[0] + state[3] + state[6], // coluna 1
-                state[1] + state[4] + state[7],
-                state[2] + state[5] + state[8],
+                state[0] + state[3] + state[6], // col 1
+                state[1] + state[4] + state[7], // col 2
+                state[2] + state[5] + state[8], // col 3
                 state[0] + state[4] + state[8], // diagonal 1
                 state[2] + state[4] + state[6]  // diagonal 2
             ]
@@ -168,7 +186,7 @@
             }
 
             const gameStatus = evaluateState(state)
-            const p = document.getElementById("game-status")
+            const p = document.getElementById("gameStatus")
             const gameStatusLabelMap = {
                 [GAME_STATE_IN_PROGRESS]: `Game in progress.<br />${turn}'s turn.`,
                 [GAME_STATE_DRAW]: "Draw =(",
@@ -191,7 +209,9 @@
 </head>
 
 <body>
-    <p id="game-status"></p>
+    <div class="status-section">
+        <p id="gameStatus"></p>
+    </div>
     <div id="board">
     </div>
     <button id="restartButton" onclick="resetGame()">Restart</button>
