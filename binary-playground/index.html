@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./bit.js"></script>
+    <script src="./binary-input.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="./bit.js"></script>
-  <script src="./binary-input.js"></script>
-</head>
-
-<body class="bg-slate-900 text-center mt-32">
-  <binary-input bits="8" />
-</body>
-
+  <body class="bg-slate-900 text-center mt-32">
+    <p class="text-white text-lg self-start">
+      Decimal value: <span id="decimal-value">0</span>
+    </p>
+    <binary-input bits="8" display-value-id="decimal-value" />
+  </body>
 </html>
