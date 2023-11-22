@@ -15,6 +15,10 @@ class BitInput extends HTMLButtonElement {
       this.innerHTML = newValue;
     }
   }
+
+  getValue() {
+    return Number(this.getAttribute("value"))
+  }
 }
 
 customElements.define("bit-input", BitInput, { extends: "button" });
